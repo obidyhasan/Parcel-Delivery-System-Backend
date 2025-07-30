@@ -10,7 +10,7 @@ const statusLogSchema = new Schema<IParcelLog>(
   {
     status: { type: String, enum: Object.values(ParcelStatus), required: true },
     timestamp: { type: Date, default: Date.now() },
-    updateBy: { type: Date, ref: "User" },
+    updateBy: { type: Schema.Types.ObjectId, ref: "User" },
     note: { type: String, default: "" },
   },
   {

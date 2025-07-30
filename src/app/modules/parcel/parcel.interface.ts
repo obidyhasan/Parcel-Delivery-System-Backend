@@ -1,12 +1,12 @@
-import { Schema, Types } from "mongoose";
+import { Types } from "mongoose";
 
 export enum ParcelStatus {
   Pending = "Pending",
-  Dispatched = "Dispatched",
+  Picked = "Picked",
   InTransit = "In Transit",
   Delivered = "Delivered",
   Cancelled = "Cancelled",
-  CONFIRM = "Confirm",
+  Confirm = "Confirm",
 }
 
 export enum ParcelType {
@@ -19,8 +19,8 @@ export enum ParcelType {
 export interface IParcelLog {
   status: ParcelStatus;
   timestamp: Date;
-  updateBy: Schema.Types.ObjectId;
-  note: string;
+  updateBy: Types.ObjectId;
+  note?: string;
 }
 
 export interface IParcel {
@@ -33,7 +33,7 @@ export interface IParcel {
   senderId: Types.ObjectId;
   receiverId: Types.ObjectId;
   currentStatus: string;
-  statusLogs?: ParcelStatus[];
+  statusLogs?: IParcelLog[];
   isBlocked?: boolean;
   pickupAddress?: string;
   deliveryAddress?: string;

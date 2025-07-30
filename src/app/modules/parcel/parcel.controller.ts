@@ -38,12 +38,34 @@ const getParcelRequestByUserId = catchAsync(
 
 const setParcelRequestStatus = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const parcel = await ParcelService.setParcelRequestStatus(req.params.id);
+    const decodedToken = req.user;
+    const parcel = await ParcelService.setParcelRequestStatus(
+      req.params.id,
+      decodedToken
+    );
 
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
       message: "Set parcel request status cancel successfully",
+      data: parcel,
+    });
+  }
+);
+
+const updateParcelRequest = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user;
+    const parcel = await ParcelService.updateParcelRequest(
+      req.params.id,
+      req.body,
+      decodedToken
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Parcel request update successfully",
       data: parcel,
     });
   }
@@ -65,7 +87,11 @@ const getIncomingParcel = catchAsync(
 
 const setParcelRequestConfirm = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const parcel = await ParcelService.setParcelRequestConfirm(req.params.id);
+    const decodedToken = req.user;
+    const parcel = await ParcelService.setParcelRequestConfirm(
+      req.params.id,
+      decodedToken
+    );
 
     sendResponse(res, {
       success: true,
@@ -89,11 +115,28 @@ const getAllParcel = catchAsync(
   }
 );
 
+const getParcelTracking = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const parcelTracking = await ParcelService.getParcelTracking(
+      req.params.trackingId
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Get parcel request tracking successfully",
+      data: parcelTracking,
+    });
+  }
+);
+
 export const ParcelController = {
   createParcelRequest,
   getParcelRequestByUserId,
   setParcelRequestStatus,
+  updateParcelRequest,
   getIncomingParcel,
   setParcelRequestConfirm,
   getAllParcel,
+  getParcelTracking,
 };

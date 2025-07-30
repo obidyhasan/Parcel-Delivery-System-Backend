@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { validateRequest } from "../../middlewares/validateRequest";
-import { createParcelRequestZodSchema } from "./parcel.validation";
+import {
+  createParcelRequestZodSchema,
+  updateParcelRequestZodSchema,
+} from "./parcel.validation";
 import { ParcelController } from "./parcel.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../user/user.interface";
@@ -8,6 +11,7 @@ import { Role } from "../user/user.interface";
 const router = Router();
 
 // ------------ Sender --------------
+
 router.post(
   "/request",
   checkAuth(Role.SENDER),
@@ -22,9 +26,22 @@ router.get(
 );
 
 router.patch(
+  "/:id",
+  checkAuth(Role.SENDER),
+  validateRequest(updateParcelRequestZodSchema),
+  ParcelController.updateParcelRequest
+);
+
+router.patch(
   "/:id/cancel",
   checkAuth(Role.SENDER),
   ParcelController.setParcelRequestStatus
+);
+
+router.get(
+  "/track/:trackingId",
+  checkAuth(Role.RECEIVER, Role.SENDER),
+  ParcelController.getParcelTracking
 );
 
 // ------------ Receiver -------------

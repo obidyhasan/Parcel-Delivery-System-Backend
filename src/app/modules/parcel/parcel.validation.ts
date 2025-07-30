@@ -1,5 +1,7 @@
 import z from "zod";
-import { ParcelType } from "./parcel.interface";
+import { ParcelStatus, ParcelType } from "./parcel.interface";
+
+const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 
 export const createParcelRequestZodSchema = z.object({
   title: z.string("Title Required. Title must be string"),
@@ -13,12 +15,19 @@ export const createParcelRequestZodSchema = z.object({
   fee: z
     .number("Fee Required. Fee must be number")
     .nonnegative("Fee must be 0 or greater"),
-  senderId: z.string("SenderId Required. SenderId must be string"),
-  receiverId: z.string("ReceiverId Required. ReceiverId must be string"),
+  senderId: z.string().regex(objectIdRegex, "Invalid senderId"),
+  receiverId: z.string().regex(objectIdRegex, "Invalid receiverId"),
   pickupAddress: z.string(
     "PickupAddress Required. Pickup Address must be string"
   ),
   deliveryAddress: z.string(
     "DeliveryAddress Required. Delivery Address must be string"
   ),
+});
+
+export const updateParcelRequestZodSchema = z.object({
+  currentStatus: z.enum(Object.values(ParcelStatus) as [string], {
+    message:
+      "CurrentStatus Required. Please choose from 'Pending', 'Picked', 'In Transit',  'Delivered', 'Cancelled', 'Confirm'.",
+  }),
 });
