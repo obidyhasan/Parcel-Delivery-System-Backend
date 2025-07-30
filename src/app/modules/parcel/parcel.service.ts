@@ -54,6 +54,10 @@ const getParcelRequestByUserId = async (decodedToken: JwtPayload) => {
 };
 
 const setParcelRequestStatus = async (parcelId: string) => {
+  const isParcelExist = await Parcel.findById(parcelId);
+  if (isParcelExist)
+    throw new AppError(httpStatus.BAD_REQUEST, "Parcel request does not exits");
+
   const updatedParcel = await Parcel.findOneAndUpdate(
     { _id: parcelId },
     { currentStatus: ParcelStatus.Cancelled },
@@ -63,8 +67,45 @@ const setParcelRequestStatus = async (parcelId: string) => {
   return updatedParcel;
 };
 
+const getIncomingParcel = async (decodedToken: JwtPayload) => {
+  const parcelsRequest = await Parcel.find({
+    receiverId: decodedToken.userId,
+    currentStatus: ParcelStatus.Dispatched,
+  });
+  return parcelsRequest;
+};
+
+const setParcelRequestConfirm = async (parcelId: string) => {
+  const isParcelExist = await Parcel.findById(parcelId);
+  if (!isParcelExist)
+    throw new AppError(httpStatus.BAD_REQUEST, "Parcel request does not exits");
+
+  if (isParcelExist.currentStatus !== ParcelStatus.Pending) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You can not set status confirm."
+    );
+  }
+
+  const updatedParcel = await Parcel.findOneAndUpdate(
+    { _id: parcelId },
+    { currentStatus: ParcelStatus.CONFIRM },
+    { new: true, validateRequest: true }
+  );
+
+  return updatedParcel;
+};
+
+const getAllParcel = async () => {
+  const parcelsRequest = await Parcel.find({});
+  return parcelsRequest;
+};
+
 export const ParcelService = {
   createParcelRequest,
   getParcelRequestByUserId,
   setParcelRequestStatus,
+  getIncomingParcel,
+  setParcelRequestConfirm,
+  getAllParcel,
 };

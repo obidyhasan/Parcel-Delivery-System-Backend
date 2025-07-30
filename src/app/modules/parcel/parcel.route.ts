@@ -10,6 +10,7 @@ const router = Router();
 // ------------ Sender --------------
 router.post(
   "/request",
+  checkAuth(Role.SENDER),
   validateRequest(createParcelRequestZodSchema),
   ParcelController.createParcelRequest
 );
@@ -27,5 +28,19 @@ router.patch(
 );
 
 // ------------ Receiver -------------
+router.get(
+  "/incoming",
+  checkAuth(Role.RECEIVER),
+  ParcelController.getIncomingParcel
+);
+
+router.patch(
+  "/:id/confirm",
+  checkAuth(Role.RECEIVER),
+  ParcelController.setParcelRequestConfirm
+);
+
+// ------------- Admin  -------------
+router.get("/", checkAuth(Role.ADMIN), ParcelController.getAllParcel);
 
 export const ParcelRouters = router;

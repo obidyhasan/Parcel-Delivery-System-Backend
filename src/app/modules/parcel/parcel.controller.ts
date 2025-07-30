@@ -49,8 +49,51 @@ const setParcelRequestStatus = catchAsync(
   }
 );
 
+const getIncomingParcel = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user;
+    const incomingParcels = await ParcelService.getIncomingParcel(decodedToken);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Get all parcel request successfully",
+      data: incomingParcels,
+    });
+  }
+);
+
+const setParcelRequestConfirm = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const parcel = await ParcelService.setParcelRequestConfirm(req.params.id);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Set parcel request status confirm successfully",
+      data: parcel,
+    });
+  }
+);
+
+const getAllParcel = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const incomingParcels = await ParcelService.getAllParcel();
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Get all parcel request successfully",
+      data: incomingParcels,
+    });
+  }
+);
+
 export const ParcelController = {
   createParcelRequest,
   getParcelRequestByUserId,
   setParcelRequestStatus,
+  getIncomingParcel,
+  setParcelRequestConfirm,
+  getAllParcel,
 };
