@@ -23,8 +23,9 @@ export interface IParcelLog {
 }
 
 export interface IParcel {
-  _id: string;
-  trackingId: string;
+  _id?: string;
+  trackingId?: string;
+  title: string;
   type: ParcelType;
   weight: number;
   fee: number;
@@ -33,4 +34,6 @@ export interface IParcel {
   currentStatus: string;
   statusLogs?: ParcelStatus[];
   isBlocked?: boolean;
+  pickupAddress?: string;
+  deliveryAddress?: string;
 }

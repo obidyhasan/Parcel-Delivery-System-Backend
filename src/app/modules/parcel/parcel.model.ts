@@ -21,7 +21,8 @@ const statusLogSchema = new Schema<IParcelLog>(
 
 const parcelSchema = new Schema<IParcel>(
   {
-    trackingId: { type: String, unique: true, required: true },
+    trackingId: { type: String, unique: true },
+    title: { type: String, required: true },
     type: { type: String, enum: Object.values(ParcelType), required: true },
     weight: { type: Number, required: true, min: 0.1 },
     fee: { type: Number, required: true, min: 0.1 },
