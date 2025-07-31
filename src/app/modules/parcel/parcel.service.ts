@@ -289,8 +289,9 @@ const setParcelRequestDelivered = async (
 
 const getAllParcel = async () => {
   const parcelsRequest = await Parcel.find({})
-    .populate("senderId")
-    .populate("receiverId");
+    .populate("senderId", "name email phone")
+    .populate("receiverId", "name email phone")
+    .populate("statusLogs.updateBy", "name email");
   return parcelsRequest;
 };
 
