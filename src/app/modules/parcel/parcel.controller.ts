@@ -87,13 +87,15 @@ const getIncomingParcel = catchAsync(
 const getDeliveryParcel = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user;
-    const incomingParcels = await ParcelService.getDeliveryParcel(decodedToken);
+    const getDeliveredParcel = await ParcelService.getDeliveryParcel(
+      decodedToken
+    );
 
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "Get delivery parcel request  successfully",
-      data: incomingParcels,
+      message: "Get delivered parcel successfully",
+      data: getDeliveredParcel,
     });
   }
 );
