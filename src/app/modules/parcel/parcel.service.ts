@@ -45,20 +45,33 @@ const createParcelRequest = async (payload: Partial<IParcel>) => {
 
   payload.statusLogs = [parcelLog];
 
-  const parcelRequest = await Parcel.create(payload);
+  const parcelRequest = await (
+    await (
+      await (
+        await Parcel.create(payload)
+      ).populate("senderId", "name email phone")
+    ).populate("receiverId", "name email phone")
+  ).populate("statusLogs.updateBy", "name email");
+
   return parcelRequest;
 };
 
 const getParcelRequestByUserId = async (decodedToken: JwtPayload) => {
   if (decodedToken.role === Role.SENDER) {
-    const parcelsRequest = await Parcel.find({ senderId: decodedToken.userId });
+    const parcelsRequest = await Parcel.find({ senderId: decodedToken.userId })
+      .populate("senderId", "name email phone")
+      .populate("receiverId", "name email phone")
+      .populate("statusLogs.updateBy", "name email");
     return parcelsRequest;
   }
 
   if (decodedToken.role === Role.RECEIVER) {
     const parcelsRequest = await Parcel.find({
       receiverId: decodedToken.userId,
-    });
+    })
+      .populate("senderId", "name email phone")
+      .populate("receiverId", "name email phone")
+      .populate("statusLogs.updateBy", "name email");
     return parcelsRequest;
   }
 };
@@ -70,6 +83,21 @@ const setParcelRequestStatus = async (
   const isParcelExist = await Parcel.findById(parcelId);
   if (!isParcelExist)
     throw new AppError(httpStatus.BAD_REQUEST, "Parcel request does not exits");
+
+  if (isParcelExist.isBlocked)
+    throw new AppError(httpStatus.BAD_REQUEST, "Parcel is blocked!");
+
+  if (
+    isParcelExist.currentStatus === ParcelStatus.Picked ||
+    isParcelExist.currentStatus === ParcelStatus.InTransit ||
+    isParcelExist.currentStatus === ParcelStatus.Delivered ||
+    isParcelExist.currentStatus === ParcelStatus.Confirm
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You can't cancel this parcel. The Parcel already dispatched."
+    );
+  }
 
   const parcelLog: IParcelLog = {
     status: ParcelStatus.Cancelled,
@@ -87,7 +115,10 @@ const setParcelRequestStatus = async (
     { _id: parcelId },
     { currentStatus: ParcelStatus.Cancelled, statusLogs: updateParcelLog },
     { new: true, validateRequest: true }
-  );
+  )
+    .populate("senderId", "name email phone")
+    .populate("receiverId", "name email phone")
+    .populate("statusLogs.updateBy", "name email");
 
   return updatedParcel;
 };
@@ -100,6 +131,9 @@ const updateParcelRequest = async (
   const isParcelExist = await Parcel.findById(parcelId);
   if (!isParcelExist)
     throw new AppError(httpStatus.BAD_REQUEST, "Parcel request does not exits");
+
+  if (isParcelExist.isBlocked)
+    throw new AppError(httpStatus.BAD_REQUEST, "Parcel is blocked!");
 
   if (
     payload.currentStatus === ParcelStatus.Confirm ||
@@ -127,7 +161,10 @@ const updateParcelRequest = async (
     { _id: parcelId },
     payload,
     { new: true, validateRequest: true }
-  );
+  )
+    .populate("senderId", "name email phone")
+    .populate("receiverId", "name email phone")
+    .populate("statusLogs.updateBy", "name email");
 
   return updatedParcel;
 };
@@ -135,9 +172,30 @@ const updateParcelRequest = async (
 const getIncomingParcel = async (decodedToken: JwtPayload) => {
   const parcelsRequest = await Parcel.find({
     receiverId: decodedToken.userId,
-    currentStatus: ParcelStatus.Picked,
-  });
+    currentStatus: {
+      $in: [
+        ParcelStatus.Picked,
+        ParcelStatus.InTransit,
+        ParcelStatus.Pending,
+        ParcelStatus.Confirm,
+      ],
+    },
+  })
+    .populate("senderId", "name email phone")
+    .populate("receiverId", "name email phone")
+    .populate("statusLogs.updateBy", "name email");
   return parcelsRequest;
+};
+
+const getDeliveryParcel = async (decodedToken: JwtPayload) => {
+  const deliveryParcel = await Parcel.find({
+    receiverId: decodedToken.userId,
+    currentStatus: ParcelStatus.Delivered,
+  })
+    .populate("senderId", "name email phone")
+    .populate("receiverId", "name email phone")
+    .populate("statusLogs.updateBy", "name email");
+  return deliveryParcel;
 };
 
 const setParcelRequestConfirm = async (
@@ -147,6 +205,9 @@ const setParcelRequestConfirm = async (
   const isParcelExist = await Parcel.findById(parcelId);
   if (!isParcelExist)
     throw new AppError(httpStatus.BAD_REQUEST, "Parcel request does not exits");
+
+  if (isParcelExist.isBlocked)
+    throw new AppError(httpStatus.BAD_REQUEST, "Parcel is blocked!");
 
   if (isParcelExist.currentStatus !== ParcelStatus.Pending) {
     throw new AppError(
@@ -171,24 +232,117 @@ const setParcelRequestConfirm = async (
     { _id: parcelId },
     { currentStatus: ParcelStatus.Confirm, statusLogs: updateParcelStatusLog },
     { new: true, validateRequest: true }
-  );
+  )
+    .populate("senderId", "name email phone")
+    .populate("receiverId", "name email phone")
+    .populate("statusLogs.updateBy", "name email");
+
+  return updatedParcel;
+};
+
+const setParcelRequestDelivered = async (
+  parcelId: string,
+  decodedToken: JwtPayload
+) => {
+  const isParcelExist = await Parcel.findById(parcelId);
+  if (!isParcelExist)
+    throw new AppError(httpStatus.BAD_REQUEST, "Parcel request does not exits");
+
+  if (isParcelExist.isBlocked)
+    throw new AppError(httpStatus.BAD_REQUEST, "Parcel is blocked!");
+
+  if (isParcelExist.currentStatus !== ParcelStatus.InTransit) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `You can not set status delivered because it is ${isParcelExist.currentStatus}.`
+    );
+  }
+
+  const parcelLog: IParcelLog = {
+    status: ParcelStatus.Delivered,
+    timestamp: new Date(),
+    updateBy: decodedToken.userId,
+    note: `Parcel updated successfully. Current status is ${ParcelStatus.Delivered}.`,
+  };
+
+  const updateParcelStatusLog = [
+    ...(isParcelExist.statusLogs as IParcelLog[]),
+    parcelLog,
+  ];
+
+  const updatedParcel = await Parcel.findOneAndUpdate(
+    { _id: parcelId },
+    {
+      currentStatus: ParcelStatus.Delivered,
+      statusLogs: updateParcelStatusLog,
+    },
+    { new: true, validateRequest: true }
+  )
+    .populate("senderId", "name email phone")
+    .populate("receiverId", "name email phone")
+    .populate("statusLogs.updateBy", "name email");
 
   return updatedParcel;
 };
 
 const getAllParcel = async () => {
-  const parcelsRequest = await Parcel.find({});
+  const parcelsRequest = await Parcel.find({})
+    .populate("senderId")
+    .populate("receiverId");
   return parcelsRequest;
 };
 
 const getParcelTracking = async (trackingId: string) => {
-  const isParcelExist = await Parcel.findOne({ trackingId }).select(
-    "statusLogs"
-  );
+  const isParcelExist = await Parcel.findOne({ trackingId })
+    .select("statusLogs")
+    .populate("statusLogs.updateBy", "name email");
   if (!isParcelExist)
     throw new AppError(httpStatus.BAD_REQUEST, "Parcel does not exist");
 
+  if (isParcelExist.isBlocked)
+    throw new AppError(httpStatus.BAD_REQUEST, "Parcel is blocked!");
+
   return isParcelExist;
+};
+
+const updateParcelRequestByAdmin = async (
+  parcelId: string,
+  payload: Partial<IParcel>
+) => {
+  const isParcelExist = await Parcel.findById({ _id: parcelId });
+
+  if (!isParcelExist)
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel does not exits");
+
+  if (isParcelExist.isBlocked)
+    throw new AppError(httpStatus.BAD_REQUEST, "Parcel is blocked!");
+
+  const updateInfo = await Parcel.findByIdAndUpdate(
+    { _id: parcelId },
+    payload,
+    {
+      new: true,
+      runValidators: true,
+    }
+  )
+    .populate("senderId", "name email phone")
+    .populate("receiverId", "name email phone")
+    .populate("statusLogs.updateBy", "name email");
+
+  return updateInfo;
+};
+
+const deleteParcelRequestByAdmin = async (parcelId: string) => {
+  const isParcelExist = await Parcel.findById({ _id: parcelId });
+
+  if (!isParcelExist)
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel does not exits");
+
+  if (isParcelExist.isBlocked)
+    throw new AppError(httpStatus.BAD_REQUEST, "Parcel is blocked!");
+
+  await Parcel.findByIdAndDelete({ _id: parcelId });
+  return null;
 };
 
 export const ParcelService = {
@@ -197,7 +351,11 @@ export const ParcelService = {
   setParcelRequestStatus,
   updateParcelRequest,
   getIncomingParcel,
+  getDeliveryParcel,
   setParcelRequestConfirm,
+  setParcelRequestDelivered,
   getAllParcel,
   getParcelTracking,
+  updateParcelRequestByAdmin,
+  deleteParcelRequestByAdmin,
 };

@@ -18,6 +18,34 @@ const getAllUser = catchAsync(
   }
 );
 
+const updateUserByAdmin = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await UserService.updateUserByAdmin(req.params.id, req.body);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Update user successfully",
+      data: user,
+    });
+  }
+);
+
+const deleteUserByAdmin = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await UserService.deleteUserByAdmin(req.params.id);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "User delete successfully",
+      data: user,
+    });
+  }
+);
+
 export const UserController = {
   getAllUser,
+  updateUserByAdmin,
+  deleteUserByAdmin,
 };

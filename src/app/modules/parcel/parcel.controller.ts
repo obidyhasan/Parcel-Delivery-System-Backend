@@ -84,6 +84,19 @@ const getIncomingParcel = catchAsync(
     });
   }
 );
+const getDeliveryParcel = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user;
+    const incomingParcels = await ParcelService.getDeliveryParcel(decodedToken);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Get delivery parcel request  successfully",
+      data: incomingParcels,
+    });
+  }
+);
 
 const setParcelRequestConfirm = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -97,6 +110,23 @@ const setParcelRequestConfirm = catchAsync(
       success: true,
       statusCode: httpStatus.OK,
       message: "Set parcel request status confirm successfully",
+      data: parcel,
+    });
+  }
+);
+
+const setParcelRequestDelivered = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user;
+    const parcel = await ParcelService.setParcelRequestDelivered(
+      req.params.id,
+      decodedToken
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Set parcel request status delivered successfully",
       data: parcel,
     });
   }
@@ -130,13 +160,48 @@ const getParcelTracking = catchAsync(
   }
 );
 
+const updateParcelRequestByAdmin = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const updatedParcel = await ParcelService.updateParcelRequestByAdmin(
+      req.params.id,
+      req.body
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Update parcel request successfully",
+      data: updatedParcel,
+    });
+  }
+);
+
+const deleteParcelRequestByAdmin = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const parcel = await ParcelService.deleteParcelRequestByAdmin(
+      req.params.id
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Delete parcel request successfully",
+      data: parcel,
+    });
+  }
+);
+
 export const ParcelController = {
   createParcelRequest,
   getParcelRequestByUserId,
   setParcelRequestStatus,
   updateParcelRequest,
   getIncomingParcel,
+  getDeliveryParcel,
   setParcelRequestConfirm,
+  setParcelRequestDelivered,
   getAllParcel,
   getParcelTracking,
+  updateParcelRequestByAdmin,
+  deleteParcelRequestByAdmin,
 };

@@ -28,6 +28,7 @@ const parcelSchema = new Schema<IParcel>(
     fee: { type: Number, required: true, min: 0.1 },
     senderId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     receiverId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    deliverDate: { type: Date },
     currentStatus: {
       type: String,
       enum: Object.values(ParcelStatus),

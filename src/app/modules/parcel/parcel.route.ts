@@ -2,6 +2,7 @@ import { Router } from "express";
 import { validateRequest } from "../../middlewares/validateRequest";
 import {
   createParcelRequestZodSchema,
+  UpdateByAdminParcelRequestZodSchema,
   updateParcelRequestZodSchema,
 } from "./parcel.validation";
 import { ParcelController } from "./parcel.controller";
@@ -14,33 +15,33 @@ const router = Router();
 
 router.post(
   "/request",
-  checkAuth(Role.SENDER),
+  checkAuth(Role.SENDER, Role.ADMIN),
   validateRequest(createParcelRequestZodSchema),
   ParcelController.createParcelRequest
 );
 
 router.get(
   "/me",
-  checkAuth(Role.RECEIVER, Role.SENDER),
+  checkAuth(Role.RECEIVER, Role.SENDER, Role.ADMIN),
   ParcelController.getParcelRequestByUserId
 );
 
 router.patch(
   "/:id",
-  checkAuth(Role.SENDER),
+  checkAuth(Role.SENDER, Role.ADMIN),
   validateRequest(updateParcelRequestZodSchema),
   ParcelController.updateParcelRequest
 );
 
 router.patch(
   "/:id/cancel",
-  checkAuth(Role.SENDER),
+  checkAuth(Role.SENDER, Role.ADMIN),
   ParcelController.setParcelRequestStatus
 );
 
 router.get(
   "/track/:trackingId",
-  checkAuth(Role.RECEIVER, Role.SENDER),
+  checkAuth(Role.RECEIVER, Role.SENDER, Role.ADMIN),
   ParcelController.getParcelTracking
 );
 
@@ -57,7 +58,32 @@ router.patch(
   ParcelController.setParcelRequestConfirm
 );
 
+router.get(
+  "/delivery",
+  checkAuth(Role.RECEIVER),
+  ParcelController.getDeliveryParcel
+);
+
+router.patch(
+  "/:id/delivered",
+  checkAuth(Role.RECEIVER),
+  ParcelController.setParcelRequestDelivered
+);
+
 // ------------- Admin  -------------
 router.get("/", checkAuth(Role.ADMIN), ParcelController.getAllParcel);
+
+router.patch(
+  "/update/:id",
+  checkAuth(Role.ADMIN),
+  validateRequest(UpdateByAdminParcelRequestZodSchema),
+  ParcelController.updateParcelRequestByAdmin
+);
+
+router.delete(
+  "/delete/:id",
+  checkAuth(Role.ADMIN),
+  ParcelController.deleteParcelRequestByAdmin
+);
 
 export const ParcelRouters = router;
