@@ -137,11 +137,13 @@ const updateParcelRequest = async (
 
   if (
     payload.currentStatus === ParcelStatus.Confirm ||
-    payload.currentStatus === ParcelStatus.Delivered
+    payload.currentStatus === ParcelStatus.Delivered ||
+    isParcelExist.currentStatus === ParcelStatus.Pending ||
+    isParcelExist.currentStatus === ParcelStatus.Cancelled
   ) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `You can't change Parcel status to ${payload.currentStatus}`
+      `You can't change Parcel status to ${payload.currentStatus}. Because Parcel current status is ${isParcelExist.currentStatus}`
     );
   }
 
