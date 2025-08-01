@@ -1,0 +1,651 @@
+{
+	"info": {
+		"_postman_id": "01654e08-7fd6-40f3-a720-2526c48092a4",
+		"name": "Live Parcel Delivery System Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16442526"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Mehedy Hasan\",\r\n    \"email\" : \"mehedy12@gmail.com\",\r\n    \"password\": \"Obidy@12\",\r\n    \"role\": \"RECEIVER\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/auth/register",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"abid@gmail.com\",\r\n    \"password\": \"Obidy@12\"\r\n    // \"email\" : \"obidyhasan@gmail.com\",\r\n    // \"password\": \"Obidy@12\"\r\n    // \"email\" : \"adminpds@gmail.com\",\r\n    // \"password\": \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/auth/login",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Parcel",
+			"item": [
+				{
+					"name": "My Parcels",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODg5ZGI2YzZmMzEwYTc3YWZlZDdjOGMiLCJlbWFpbCI6Im1laGVkeUBnbWFpbC5jb20iLCJyb2xlIjoiUkVDRUlWRVIiLCJpYXQiOjE3NTM4NzEzMjgsImV4cCI6MTc1NDQ3NjEyOH0.4GKtcr9gLJbYxU8mKn6SqMs98fRugLeC_GZSZaJAqzc",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Programmin Hero Book 2\",\r\n    \"type\": \"Document\",\r\n    \"weight\": 5,\r\n    \"fee\": 490,\r\n    \"senderId\": \"6889d34a477574ca2bc25893\",\r\n    \"receiverId\": \"6889d37e477574ca2bc25896\",\r\n    \"pickupAddress\": \"Dhaka\",\r\n    \"deliveryAddress\": \"Khulna\" \r\n}"
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/parcel/me?filter=Confirm",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"parcel",
+								"me"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "Confirm"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Parcel Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiMWQyMzMyYzY5YWQ2ZTg1YzFmMDQiLCJlbWFpbCI6Im9iaWR5aGFzYW5AZ21haWwuY29tIiwicm9sZSI6IlNFTkRFUiIsImlhdCI6MTc1Mzk0Nzc5NiwiZXhwIjoxNzU0NTUyNTk2fQ.1EPbSH8bElEC-03JiUJ6qY_vJjTskyM-mRLRZBn8RWY",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Programming Hero Book 2.0\",\r\n    \"type\": \"Package\",\r\n    \"weight\": 2,\r\n    \"fee\": 499,\r\n    \"senderId\": \"688b1d2332c69ad6e85c1f04\",\r\n    \"receiverId\": \"688b1d0d32c69ad6e85c1f01\",\r\n    \"pickupAddress\": \"Dhaka\",\r\n    \"deliveryAddress\": \"Khulna\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/parcel/request",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"parcel",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Parcel Request",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiMWQyMzMyYzY5YWQ2ZTg1YzFmMDQiLCJlbWFpbCI6Im9iaWR5aGFzYW5AZ21haWwuY29tIiwicm9sZSI6IlNFTkRFUiIsImlhdCI6MTc1Mzk0Nzc5NiwiZXhwIjoxNzU0NTUyNTk2fQ.1EPbSH8bElEC-03JiUJ6qY_vJjTskyM-mRLRZBn8RWY",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"currentStatus\" : \"In Transit\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/parcel/688b1eda3a45608d0064dfbc",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"parcel",
+								"688b1eda3a45608d0064dfbc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Parcel Request Cancel",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiMWQyMzMyYzY5YWQ2ZTg1YzFmMDQiLCJlbWFpbCI6Im9iaWR5aGFzYW5AZ21haWwuY29tIiwicm9sZSI6IlNFTkRFUiIsImlhdCI6MTc1Mzk0Nzc5NiwiZXhwIjoxNzU0NTUyNTk2fQ.1EPbSH8bElEC-03JiUJ6qY_vJjTskyM-mRLRZBn8RWY",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"mehedy@gmail.com\",\r\n    \"password\": \"Obidy@12\"\r\n}"
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/parcel/688b1eda3a45608d0064dfbc/cancel",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"parcel",
+								"688b1eda3a45608d0064dfbc",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Incoming Parcel",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiMWQwZDMyYzY5YWQ2ZTg1YzFmMDEiLCJlbWFpbCI6ImFiaWRAZ21haWwuY29tIiwicm9sZSI6IlJFQ0VJVkVSIiwiaWF0IjoxNzUzOTQ4MzU3LCJleHAiOjE3NTQ1NTMxNTd9.cYuQntdmJiyt21rRRqjETeTjwLx2xiwhUtPIeKiQUd4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Programmin Hero Book 2\",\r\n    \"type\": \"Document\",\r\n    \"weight\": 5,\r\n    \"fee\": 490,\r\n    \"senderId\": \"6889d34a477574ca2bc25893\",\r\n    \"receiverId\": \"6889d37e477574ca2bc25896\",\r\n    \"pickupAddress\": \"Dhaka\",\r\n    \"deliveryAddress\": \"Khulna\" \r\n}"
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/parcel/incoming",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"parcel",
+								"incoming"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiMWQwZDMyYzY5YWQ2ZTg1YzFmMDEiLCJlbWFpbCI6ImFiaWRAZ21haWwuY29tIiwicm9sZSI6IlJFQ0VJVkVSIiwiaWF0IjoxNzUzOTQ4MzU3LCJleHAiOjE3NTQ1NTMxNTd9.cYuQntdmJiyt21rRRqjETeTjwLx2xiwhUtPIeKiQUd4",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Parcel Request Confirm",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiMWQwZDMyYzY5YWQ2ZTg1YzFmMDEiLCJlbWFpbCI6ImFiaWRAZ21haWwuY29tIiwicm9sZSI6IlJFQ0VJVkVSIiwiaWF0IjoxNzUzOTQ4MzU3LCJleHAiOjE3NTQ1NTMxNTd9.cYuQntdmJiyt21rRRqjETeTjwLx2xiwhUtPIeKiQUd4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/parcel/688b1eda3a45608d0064dfbc/confirm",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"parcel",
+								"688b1eda3a45608d0064dfbc",
+								"confirm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Delivery Parcel",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiMWQwZDMyYzY5YWQ2ZTg1YzFmMDEiLCJlbWFpbCI6ImFiaWRAZ21haWwuY29tIiwicm9sZSI6IlJFQ0VJVkVSIiwiaWF0IjoxNzUzOTQ4MzU3LCJleHAiOjE3NTQ1NTMxNTd9.cYuQntdmJiyt21rRRqjETeTjwLx2xiwhUtPIeKiQUd4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Programmin Hero Book 2\",\r\n    \"type\": \"Document\",\r\n    \"weight\": 5,\r\n    \"fee\": 490,\r\n    \"senderId\": \"6889d34a477574ca2bc25893\",\r\n    \"receiverId\": \"6889d37e477574ca2bc25896\",\r\n    \"pickupAddress\": \"Dhaka\",\r\n    \"deliveryAddress\": \"Khulna\" \r\n}"
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/parcel/delivery",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"parcel",
+								"delivery"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Parcel Request Delivered",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiMWQwZDMyYzY5YWQ2ZTg1YzFmMDEiLCJlbWFpbCI6ImFiaWRAZ21haWwuY29tIiwicm9sZSI6IlJFQ0VJVkVSIiwiaWF0IjoxNzUzOTQ4MzU3LCJleHAiOjE3NTQ1NTMxNTd9.cYuQntdmJiyt21rRRqjETeTjwLx2xiwhUtPIeKiQUd4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"mehedy@gmail.com\",\r\n    \"password\": \"Obidy@12\"\r\n}"
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/parcel/688b1eda3a45608d0064dfbc/delivered",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"parcel",
+								"688b1eda3a45608d0064dfbc",
+								"delivered"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Parcel Tracking",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODg5ZGI2YzZmMzEwYTc3YWZlZDdjOGMiLCJlbWFpbCI6Im1laGVkeUBnbWFpbC5jb20iLCJyb2xlIjoiUkVDRUlWRVIiLCJpYXQiOjE3NTM4NzEzMjgsImV4cCI6MTc1NDQ3NjEyOH0.4GKtcr9gLJbYxU8mKn6SqMs98fRugLeC_GZSZaJAqzc",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Programmin Hero Book 2\",\r\n    \"type\": \"Document\",\r\n    \"weight\": 5,\r\n    \"fee\": 490,\r\n    \"senderId\": \"6889d34a477574ca2bc25893\",\r\n    \"receiverId\": \"6889d37e477574ca2bc25896\",\r\n    \"pickupAddress\": \"Dhaka\",\r\n    \"deliveryAddress\": \"Khulna\" \r\n}"
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/parcel/track/TRK-1753947866569-339",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"parcel",
+								"track",
+								"TRK-1753947866569-339"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiMWQwZDMyYzY5YWQ2ZTg1YzFmMDEiLCJlbWFpbCI6ImFiaWRAZ21haWwuY29tIiwicm9sZSI6IlJFQ0VJVkVSIiwiaWF0IjoxNzUzOTQ4MzU3LCJleHAiOjE3NTQ1NTMxNTd9.cYuQntdmJiyt21rRRqjETeTjwLx2xiwhUtPIeKiQUd4",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Parcel",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODg5ZDMxMDQ3NzU3NGNhMmJjMjU4OGYiLCJlbWFpbCI6ImFkbWlucGRzQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1Mzg3MjkwMiwiZXhwIjoxNzU0NDc3NzAyfQ.E0lYBtlX5IBOyMSoyXogKI_0OChHT3Uh2iUd2UXFHOg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Programmin Hero Book 2\",\r\n    \"type\": \"Document\",\r\n    \"weight\": 5,\r\n    \"fee\": 490,\r\n    \"senderId\": \"6889d34a477574ca2bc25893\",\r\n    \"receiverId\": \"6889d37e477574ca2bc25896\",\r\n    \"pickupAddress\": \"Dhaka\",\r\n    \"deliveryAddress\": \"Khulna\" \r\n}"
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/parcel",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"parcel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Parcel By Admin",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODg5ZDMxMDQ3NzU3NGNhMmJjMjU4OGYiLCJlbWFpbCI6ImFkbWlucGRzQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1Mzg3MjkwMiwiZXhwIjoxNzU0NDc3NzAyfQ.E0lYBtlX5IBOyMSoyXogKI_0OChHT3Uh2iUd2UXFHOg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Programming Hero Book 3.0\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/parcel/update/688b1eda3a45608d0064dfbc",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"parcel",
+								"update",
+								"688b1eda3a45608d0064dfbc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Parcel By Admin",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODg5ZDMxMDQ3NzU3NGNhMmJjMjU4OGYiLCJlbWFpbCI6ImFkbWlucGRzQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1Mzg3MjkwMiwiZXhwIjoxNzU0NDc3NzAyfQ.E0lYBtlX5IBOyMSoyXogKI_0OChHT3Uh2iUd2UXFHOg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Programmin Hero Book 2\",\r\n    \"type\": \"Document\",\r\n    \"weight\": 5,\r\n    \"fee\": 490,\r\n    \"senderId\": \"6889d34a477574ca2bc25893\",\r\n    \"receiverId\": \"6889d37e477574ca2bc25896\",\r\n    \"pickupAddress\": \"Dhaka\",\r\n    \"deliveryAddress\": \"Khulna\" \r\n}"
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/parcel/delete/6889db9d6f310a77afed7c91",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"parcel",
+								"delete",
+								"6889db9d6f310a77afed7c91"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get All User",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiMWUwODk4ODY5OGZkOWYzMDQyZjEiLCJlbWFpbCI6ImFkbWlucGRzQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1Mzk0NzY2MiwiZXhwIjoxNzU0NTUyNDYyfQ.OKazVDZprDjb-3kkea2Z96AAwElN-HTNXgFqWyqLSTI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Programmin Hero Book 2\",\r\n    \"type\": \"Document\",\r\n    \"weight\": 5,\r\n    \"fee\": 490,\r\n    \"senderId\": \"6889d34a477574ca2bc25893\",\r\n    \"receiverId\": \"6889d37e477574ca2bc25896\",\r\n    \"pickupAddress\": \"Dhaka\",\r\n    \"deliveryAddress\": \"Khulna\" \r\n}"
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/user",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User By Admin",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiMWUwODk4ODY5OGZkOWYzMDQyZjEiLCJlbWFpbCI6ImFkbWlucGRzQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1Mzk0NzY2MiwiZXhwIjoxNzU0NTUyNDYyfQ.OKazVDZprDjb-3kkea2Z96AAwElN-HTNXgFqWyqLSTI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Mehedy Hasan Tamim\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/user/688b1d3c32c69ad6e85c1f07",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"688b1d3c32c69ad6e85c1f07"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User By Admin",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhiMWUwODk4ODY5OGZkOWYzMDQyZjEiLCJlbWFpbCI6ImFkbWlucGRzQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1Mzk0NzY2MiwiZXhwIjoxNzU0NTUyNDYyfQ.OKazVDZprDjb-3kkea2Z96AAwElN-HTNXgFqWyqLSTI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Mehedy Hasan Tamim\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://parcel-delivery-system-backend.vercel.app/api/v1/user/688b1e5699219c5ed5d9e677",
+							"protocol": "https",
+							"host": [
+								"parcel-delivery-system-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"688b1e5699219c5ed5d9e677"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
