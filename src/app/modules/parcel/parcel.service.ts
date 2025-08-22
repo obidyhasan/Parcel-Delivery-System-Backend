@@ -9,8 +9,6 @@ import { Role } from "../user/user.interface";
 import { Types } from "mongoose";
 
 const createParcelRequest = async (payload: Partial<IParcel>) => {
-  console.log(payload);
-
   const isSenderExist = await User.findById(payload.senderId);
   if (!isSenderExist)
     throw new AppError(
@@ -314,9 +312,10 @@ const getAllParcel = async () => {
 };
 
 const getParcelTracking = async (trackingId: string) => {
-  const isParcelExist = await Parcel.findOne({ trackingId })
-    .select("statusLogs")
-    .populate("statusLogs.updateBy", "name email");
+  const isParcelExist = await Parcel.findOne({ trackingId }).populate(
+    "statusLogs.updateBy",
+    "name email"
+  );
   if (!isParcelExist)
     throw new AppError(httpStatus.BAD_REQUEST, "Parcel does not exist");
 
