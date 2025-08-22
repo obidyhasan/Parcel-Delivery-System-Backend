@@ -6,6 +6,9 @@ import { validateRequest } from "../../middlewares/validateRequest";
 import { updateUserZodSchema } from "./user.validation";
 
 const router = Router();
+
+router.get("/me", checkAuth(...Object.values(Role)), UserController.getMe);
+
 // ---------------- Admin -----------------
 router.get("/", checkAuth(Role.ADMIN), UserController.getAllUser);
 

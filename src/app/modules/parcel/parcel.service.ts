@@ -9,6 +9,8 @@ import { Role } from "../user/user.interface";
 import { Types } from "mongoose";
 
 const createParcelRequest = async (payload: Partial<IParcel>) => {
+  console.log(payload);
+
   const isSenderExist = await User.findById(payload.senderId);
   if (!isSenderExist)
     throw new AppError(
@@ -16,12 +18,14 @@ const createParcelRequest = async (payload: Partial<IParcel>) => {
       "Sender not exist. Please create a sender account."
     );
 
-  const isReceiverExist = await User.findById(payload.receiverId);
+  const isReceiverExist = await User.findOne({ email: payload.receiverEmail });
   if (!isReceiverExist)
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      "Receiver not exist. Please create a receiver account."
+      "Receiver not exist. Please provide a valid Receiver Email"
     );
+
+  payload.receiverId = isReceiverExist?._id;
 
   const isParcelRequestExist = await Parcel.findOne({
     title: payload.title,
@@ -95,12 +99,17 @@ const setParcelRequestStatus = async (
     isParcelExist.currentStatus === ParcelStatus.Picked ||
     isParcelExist.currentStatus === ParcelStatus.InTransit ||
     isParcelExist.currentStatus === ParcelStatus.Delivered ||
-    isParcelExist.currentStatus === ParcelStatus.Confirm ||
-    isParcelExist.currentStatus === ParcelStatus.Cancelled
+    isParcelExist.currentStatus === ParcelStatus.Confirm
   ) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
       "You can't cancel this parcel. The Parcel already dispatched."
+    );
+  }
+  if (isParcelExist.currentStatus === ParcelStatus.Cancelled) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You can't cancel this parcel. The Parcel already Cancelled."
     );
   }
 

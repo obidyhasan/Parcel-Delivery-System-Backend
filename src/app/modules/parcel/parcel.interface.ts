@@ -23,15 +23,23 @@ export interface IParcelLog {
   note?: string;
 }
 
+export enum Status {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  BLOCKED = "BLOCKED",
+}
+
 export interface IParcel {
   _id?: string;
   trackingId?: string;
   title: string;
   type: ParcelType;
+  status?: Status;
   weight: number;
   fee: number;
   senderId: Types.ObjectId;
   receiverId: Types.ObjectId;
+  receiverEmail?: string;
   currentStatus: string;
   deliverDate: Date;
   statusLogs?: IParcelLog[];

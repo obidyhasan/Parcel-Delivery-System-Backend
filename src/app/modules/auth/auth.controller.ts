@@ -38,7 +38,31 @@ const credentialsLogin = catchAsync(
   }
 );
 
+const userLogout = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+    });
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+    });
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "User logout successfully",
+      data: null,
+    });
+  }
+);
+
 export const AuthControllers = {
   createUser,
   credentialsLogin,
+  userLogout,
 };

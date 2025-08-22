@@ -3,6 +3,7 @@ import httpStatus from "http-status-codes";
 import AppError from "../../helper/AppError";
 import { IUser } from "./user.interface";
 import { User } from "./user.model";
+import { JwtPayload } from "jsonwebtoken";
 
 const getAllUser = async () => {
   const users = await User.find().select("-password");
@@ -38,8 +39,14 @@ const deleteUserByAdmin = async (userId: string) => {
   return null;
 };
 
+const getMe = async (decodedToken: JwtPayload) => {
+  const users = await User.findById(decodedToken?.userId).select("-password");
+  return users;
+};
+
 export const UserService = {
   getAllUser,
   updateUserByAdmin,
   deleteUserByAdmin,
+  getMe,
 };

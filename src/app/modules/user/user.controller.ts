@@ -4,6 +4,7 @@ import { sendResponse } from "../../utils/sendResponse";
 import { catchAsync } from "../../utils/catchAsync";
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "./user.service";
+import { JwtPayload } from "jsonwebtoken";
 
 const getAllUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -44,8 +45,23 @@ const deleteUserByAdmin = catchAsync(
   }
 );
 
+const getMe = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload;
+    const users = await UserService.getMe(decodedToken);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Get all users successfully",
+      data: users,
+    });
+  }
+);
+
 export const UserController = {
   getAllUser,
   updateUserByAdmin,
   deleteUserByAdmin,
+  getMe,
 };
