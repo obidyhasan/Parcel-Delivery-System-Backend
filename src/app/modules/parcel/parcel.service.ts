@@ -60,17 +60,36 @@ const createParcelRequest = async (payload: Partial<IParcel>) => {
   return parcelRequest;
 };
 
-const getParcelRequestByUserId = async (decodedToken: JwtPayload) => {
+const getParcelRequestByUserId = async (
+  decodedToken: JwtPayload,
+  query: Record<string, string>
+) => {
   if (decodedToken.role === Role.SENDER) {
-    const parcelsRequest = await Parcel.find({
-      senderId: decodedToken.userId,
-      isBlocked: false,
-      status: Status.ACTIVE,
-    })
-      .populate("senderId", "name email phone")
-      .populate("receiverId", "name email phone")
-      .populate("statusLogs.updateBy", "name email");
-    return parcelsRequest;
+    const queryBuilder = new QueryBuilder(
+      Parcel.find({
+        senderId: decodedToken.userId,
+        isBlocked: false,
+        status: Status.ACTIVE,
+      })
+        .populate("senderId", "name email phone")
+        .populate("receiverId", "name email phone")
+        .populate("statusLogs.updateBy", "name email"),
+      query
+    );
+
+    const parcels = await queryBuilder
+      .search(parcelSearchableFields)
+      .filter()
+      .sort()
+      .fields()
+      .paginate();
+
+    const [data, meta] = await Promise.all([
+      parcels.build(),
+      queryBuilder.getMeta(),
+    ]);
+
+    return { data, meta };
   }
 
   if (decodedToken.role === Role.RECEIVER) {
@@ -343,7 +362,10 @@ const getParcelTracking = async (trackingId: string) => {
   const isParcelExist = await Parcel.findOne({
     trackingId,
     status: Status.ACTIVE,
-  }).populate("statusLogs.updateBy", "name email");
+  })
+    .populate("senderId", "name email phone")
+    .populate("receiverId", "name email phone")
+    .populate("statusLogs.updateBy", "name email");
   if (!isParcelExist)
     throw new AppError(httpStatus.BAD_REQUEST, "Parcel does not exist");
 

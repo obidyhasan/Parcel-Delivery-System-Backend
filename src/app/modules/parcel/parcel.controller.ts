@@ -23,8 +23,10 @@ const createParcelRequest = catchAsync(
 const getParcelRequestByUserId = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user;
+    const query = req.query;
     const allParcelRequest = await ParcelService.getParcelRequestByUserId(
-      decodedToken
+      decodedToken,
+      query as Record<string, string>
     );
 
     sendResponse(res, {

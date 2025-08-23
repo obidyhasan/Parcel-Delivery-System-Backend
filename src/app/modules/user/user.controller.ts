@@ -8,7 +8,8 @@ import { JwtPayload } from "jsonwebtoken";
 
 const getAllUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const users = await UserService.getAllUser();
+    const query = req.query;
+    const users = await UserService.getAllUser(query as Record<string, string>);
 
     sendResponse(res, {
       success: true,

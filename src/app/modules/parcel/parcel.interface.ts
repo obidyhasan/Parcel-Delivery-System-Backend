@@ -41,7 +41,7 @@ export interface IParcel {
   receiverId: Types.ObjectId;
   receiverEmail?: string;
   currentStatus: string;
-  deliverDate: Date;
+  deliverDate?: Date;
   statusLogs?: IParcelLog[];
   isBlocked?: boolean;
   pickupAddress?: string;

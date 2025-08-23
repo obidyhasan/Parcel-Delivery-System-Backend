@@ -43,6 +43,8 @@ const parcelSchema = new Schema<IParcel>(
     },
     statusLogs: [statusLogSchema],
     isBlocked: { type: Boolean, default: false },
+    deliveryAddress: { type: String },
+    pickupAddress: { type: String },
   },
   {
     timestamps: true,

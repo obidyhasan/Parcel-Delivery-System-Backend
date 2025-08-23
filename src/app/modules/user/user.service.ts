@@ -4,10 +4,27 @@ import AppError from "../../helper/AppError";
 import { IUser } from "./user.interface";
 import { User } from "./user.model";
 import { JwtPayload } from "jsonwebtoken";
+import { QueryBuilder } from "../../utils/QueryBuilder";
 
-const getAllUser = async () => {
-  const users = await User.find().select("-password");
-  return users;
+const getAllUser = async (query: Record<string, string>) => {
+  const queryBuilder = new QueryBuilder(
+    User.find({}).select("-password"),
+    query
+  );
+
+  const users = await queryBuilder
+    .search([])
+    .filter()
+    .sort()
+    .fields()
+    .paginate();
+
+  const [data, meta] = await Promise.all([
+    users.build(),
+    queryBuilder.getMeta(),
+  ]);
+
+  return { data, meta };
 };
 
 const updateUserByAdmin = async (userId: string, payload: Partial<IUser>) => {
