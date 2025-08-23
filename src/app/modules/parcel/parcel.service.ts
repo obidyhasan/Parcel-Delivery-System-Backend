@@ -1,12 +1,14 @@
 import httpStatus from "http-status-codes";
 import AppError from "../../helper/AppError";
-import { IParcel, IParcelLog, ParcelStatus } from "./parcel.interface";
+import { IParcel, IParcelLog, ParcelStatus, Status } from "./parcel.interface";
 import { Parcel } from "./parcel.model";
 import { getTrackingId } from "../../utils/getTrackingId";
 import { User } from "../user/user.model";
 import { JwtPayload } from "jsonwebtoken";
 import { Role } from "../user/user.interface";
 import { Types } from "mongoose";
+import { QueryBuilder } from "../../utils/QueryBuilder";
+import { parcelSearchableFields } from "./parcel.constant";
 
 const createParcelRequest = async (payload: Partial<IParcel>) => {
   const isSenderExist = await User.findById(payload.senderId);
@@ -63,6 +65,7 @@ const getParcelRequestByUserId = async (decodedToken: JwtPayload) => {
     const parcelsRequest = await Parcel.find({
       senderId: decodedToken.userId,
       isBlocked: false,
+      status: Status.ACTIVE,
     })
       .populate("senderId", "name email phone")
       .populate("receiverId", "name email phone")
@@ -74,6 +77,7 @@ const getParcelRequestByUserId = async (decodedToken: JwtPayload) => {
     const parcelsRequest = await Parcel.find({
       receiverId: decodedToken.userId,
       isBlocked: false,
+      status: Status.ACTIVE,
     })
       .populate("senderId", "name email phone")
       .populate("receiverId", "name email phone")
@@ -197,6 +201,7 @@ const getIncomingParcel = async (decodedToken: JwtPayload) => {
       ],
     },
     isBlocked: false,
+    status: Status.ACTIVE,
   })
     .populate("senderId", "name email phone")
     .populate("receiverId", "name email phone")
@@ -209,6 +214,7 @@ const getDeliveryParcel = async (decodedToken: JwtPayload) => {
     receiverId: decodedToken.userId,
     currentStatus: ParcelStatus.Delivered,
     isBlocked: false,
+    status: Status.ACTIVE,
   })
     .populate("senderId", "name email phone")
     .populate("receiverId", "name email phone")
@@ -303,19 +309,41 @@ const setParcelRequestDelivered = async (
   return updatedParcel;
 };
 
-const getAllParcel = async () => {
-  const parcelsRequest = await Parcel.find({})
-    .populate("senderId", "name email phone")
-    .populate("receiverId", "name email phone")
-    .populate("statusLogs.updateBy", "name email");
-  return parcelsRequest;
+const getAllParcel = async (query: Record<string, string>) => {
+  // const parcelsRequest = await Parcel.find({})
+  //   .populate("senderId", "name email phone")
+  //   .populate("receiverId", "name email phone")
+  //   .populate("statusLogs.updateBy", "name email");
+  // return parcelsRequest;
+
+  const queryBuilder = new QueryBuilder(
+    Parcel.find({})
+      .populate("senderId", "name email phone")
+      .populate("receiverId", "name email phone")
+      .populate("statusLogs.updateBy", "name email"),
+    query
+  );
+
+  const parcels = await queryBuilder
+    .search(parcelSearchableFields)
+    .filter()
+    .sort()
+    .fields()
+    .paginate();
+
+  const [data, meta] = await Promise.all([
+    parcels.build(),
+    queryBuilder.getMeta(),
+  ]);
+
+  return { data, meta };
 };
 
 const getParcelTracking = async (trackingId: string) => {
-  const isParcelExist = await Parcel.findOne({ trackingId }).populate(
-    "statusLogs.updateBy",
-    "name email"
-  );
+  const isParcelExist = await Parcel.findOne({
+    trackingId,
+    status: Status.ACTIVE,
+  }).populate("statusLogs.updateBy", "name email");
   if (!isParcelExist)
     throw new AppError(httpStatus.BAD_REQUEST, "Parcel does not exist");
 

@@ -136,13 +136,16 @@ const setParcelRequestDelivered = catchAsync(
 
 const getAllParcel = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const incomingParcels = await ParcelService.getAllParcel();
+    const query = req.query;
+    const result = await ParcelService.getAllParcel(
+      query as Record<string, string>
+    );
 
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
       message: "Get all parcel request successfully",
-      data: incomingParcels,
+      data: result,
     });
   }
 );
